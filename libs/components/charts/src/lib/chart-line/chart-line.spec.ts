@@ -64,6 +64,7 @@ type ScaleProbe = {
         }
         @if (renderSeries()) {
           <sky-chart-line-series
+            [emphasized]="emphasized()"
             [labelText]="seriesLabel()"
             [values]="values()"
           />
@@ -82,6 +83,7 @@ class TestComponent {
   public categories = input<(string | number)[]>(['2023', '2024']);
   public categoryScaleType = input<SkyChartCategoryScaleType>('category');
   public currencyCode = input<string | undefined>(undefined);
+  public emphasized = input(false);
   public format = input<SkyChartValueFormat>('number');
   public renderCategoryAxis = input(true);
   public renderSeries = input(true);
@@ -526,6 +528,21 @@ describe('Chart line component', () => {
     expect(requireChart().data.datasets[0].hidden).toBe(false);
     expect(requireChart().data.datasets[1].hidden).toBe(true);
     expect(getLegendButtons()[1].getAttribute('aria-pressed')).toBe('false');
+  });
+
+  it('should draw an emphasized series with a thicker line and larger points', () => {
+    fixture.componentRef.setInput('renderSecondSeries', true);
+    fixture.componentRef.setInput('emphasized', true);
+    fixture.detectChanges();
+
+    const [emphasized, other] = requireChart().data.datasets;
+
+    expect(emphasized.borderWidth).toBe(6);
+    expect(emphasized.pointBorderWidth).toBe(6);
+    expect(emphasized.pointHoverRadius).toBe(7);
+    expect(other.borderWidth).toBeUndefined();
+    expect(other.pointBorderWidth).toBeUndefined();
+    expect(other.pointHoverRadius).toBeUndefined();
   });
 
   it('should format axis ticks using the value axis format', () => {
