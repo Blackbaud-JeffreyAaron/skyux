@@ -333,6 +333,12 @@ describe('Chart line component', () => {
     );
   });
 
+  it('should clip lines just outside the plot so edge points stay whole', () => {
+    fixture.detectChanges();
+
+    expect(requireChart().options.datasets?.line?.clip).toBe(8);
+  });
+
   it('should copy the series values before handing them to Chart.js', () => {
     const values = [10, 20];
     fixture.componentRef.setInput('values', values);
